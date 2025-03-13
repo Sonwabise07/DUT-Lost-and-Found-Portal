@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        /* Basic CSS for layout - You'll need to expand this */
+        .home-container {
+            width: 80%;
+            margin: 0 auto;
+            /* Center the content */
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            /* Space buttons evenly */
+            gap: 20px;
+            /* Add some space between buttons */
+            margin-bottom: 20px;
+            /* Add space below the buttons */
+        }
+
+        .action-buttons a {
+            padding: 10px 20px;
+            /* Button size */
+            background-color: #007bff;
+            /* Example button color */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            /* Rounded corners */
+        }
+
+        .recent-listings {
+            margin-bottom: 30px;
+            /* Space below listings */
+        }
+
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            /* Responsive grid */
+            gap: 20px;
+            /* Spacing between items */
+        }
+
+        .listing-item {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .item-details {
+            margin-top: 10px;
+        }
+
+        .search-filters {
+            margin-bottom: 20px;
+            /* Spacing below filters */
+        }
+
+        .search-bar {
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            display: flex;
+            justify-content: space-between;
+            /* Space filters evenly */
+            gap: 10px;
+            /* Add some space between filter groups */
+        }
+
+        .filter-group {
+            margin-right: 10px;
+        }
+
+        #apply-filters-btn {
+            padding: 10px 15px;
+            /* Button size */
+            background-color: #28a745;
+            /* Example button color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-container {
+            text-align: right;
+            /* Align to the right */
+            margin-bottom: 10px;
+            /* Add some space below */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="home-container">
+
+        <div class="logout-container">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        </div>
+
+        <h1>Welcome to Lost and Found!</h1>
+        <p>Hi there,i hope you'll find whatever it is you are looking for.</p>
+
+        {% if current_user.is_authenticated %}
+        <div class="action-buttons">
+            <a href="{{ url_for('report_item') }}">Report an Item</a>
+            <a href="{{ url_for('home') }}">Look for Lost Item</a>
+        </div>
+
+        <section class="recent-listings">
+            <h2>Recent Listings</h2>
+            <div class="listings-grid">
+                {% for item in recent_listings %}
+                <div class="listing-item">
+                    <img src="{{ item.image_url }}" alt="{{ item.name }}">
+                    <div class="item-details">
+                        <h3>{{ item.name }}</h3>
+                        <p class="description">{{ item.description }}</p>
+                        <p class="location">Location: {{ item.location }}</p>
+                        <p class="date">Date: {{ item.date_reported }}</p>
+                        <a href="{{ url_for('item_detail', item_id=item.id) }}">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            </section>
+
+        <section class="search-filters">
+            <h2>Search and Filters</h2>
+            <form method="GET" action="{{ url_for('home') }}">
+                <div class="search-bar">
+                    <input type="text" id="search-input" name="search" placeholder="Enter Item Name"
+                        value="{{ search_term }}">
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="campus-filter">By Campus:</label>
+                        <select id="campus-filter" name="campus">
+                            <option value="all">All</option>
+                            <option value="ritson" {% if campus_filter == 'ritson' %}selected{% endif %}>Ritson
+                            </option>
+                            <option value="steve" {% if campus_filter == 'steve' %}selected{% endif %}>Steve Biko
+                            </option>
+                            <option value="ml" {% if campus_filter == 'ml' %}selected{% endif %}>ML Sultan
+                            </option>
+                            </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="date-filter">By Date Lost:</label>
+                        <select id="date-filter" name="date">
+                            <option value="all">All</option>
+                            <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Today</option>
+                            <option value="week" {% if date_filter == 'week' %}selected{% endif %}>Last Week
+                            </option>
+                            <option value="month" {% if date_filter == 'month' %}selected{% endif %}>Last Month
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="category-filter">By Category:</label>
+                        <select id="category-filter" name="category">
+                            <option value="all">All</option>
+                            <option value="electronics" {% if category_filter == 'electronics' %}selected{% endif %}>
+                                Electronics
+                            </option>
+                            <option value="id_cards" {% if category_filter == 'id_cards' %}selected{% endif %}>ID
+                                Cards</option>
+                            <option value="books" {% if category_filter == 'books' %}selected{% endif %}>Books
+                            </option>
+                            <option value="others" {% if category_filter == 'others' %}selected{% endif %}>Others
+                            </option>
+                            </select>
+                    </div>
+                </div>
+                <button type="submit" id="apply-filters-btn">Apply Filters</button>
+            </form>
+        </section>
+
+        {% else %}
+        <a href="{{ url_for('register') }}">Register</a> | <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+
+    </div>
+</body>
+
+</html>

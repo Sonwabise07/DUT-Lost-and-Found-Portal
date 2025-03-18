@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}My Listings{% endblock %}
+
+{% block content %}
+    <h1>My Listings</h1>
+
+    {% if items %}
+        <div class="listings-grid">
+            {% for item in items %}
+                <div class="listing-item">
+                    {% if item.image_filename %}
+                        <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="Item Image">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="Placeholder Image">
+                    {% endif %}
+                    <div class="item-details">
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.description }}</p>
+                        <p>Location Found: {{ item.location_found }}</p>
+                        <p>Date Reported: {{ item.date_reported.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        <p>Status: {% if item.is_claimed %}Claimed{% else %}Lost{% endif %}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have not reported any items yet.</p>
+    {% endif %}
+{% endblock %}

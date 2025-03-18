@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="home-container">
+
+    <div class="logout-container">
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('login.logout') }}">Logout</a>
+        {% endif %}
+    </div>
+
+    <h1>Welcome to Lost and Found!</h1>
+    <p>Hi there, I hope you'll find whatever it is you are looking for.</p>
+
+    {% if current_user.is_authenticated %}
+    <div class="action-buttons">
+        <a href="{{ url_for('reports.new_report') }}">Report an Item</a>
+        <a href="{{ url_for('home.home') }}">Look for Lost Item</a>
+    </div>
+
+    <section class="recent-listings">
+        <h2>Recent Listings</h2>
+        <div class="listings-grid">
+            {% for item in recent_listings %}
+            <div class="listing-item">
+               {# Check if image_filename exists before constructing the URL #}
+                {% if item.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="Item Image">
+                {% else %}
+                    {# Optionally, display a placeholder image #}
+                    <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="Placeholder Image">
+                {% endif %}
+
+                <div class="item-details">
+                    <h3>{{ item.title }}</h3>  {# Use 'title', not 'name' #}
+                    <p class="description">{{ item.description }}</p>
+                    <p class="location">Location: {{ item.location_found }}</p>
+                    <p class="date">Date Found: {{ item.date_found.strftime('%Y-%m-%d') }}</p>
+                    <p class="date">Date Reported: {{ item.date_reported.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                </div>
+            </div>
+            {% else %}
+                <p>No items have been reported yet.</p>
+            {% endfor %}
+        </div>
+        </section>
+
+    <section class="search-filters">
+        <h2>Search and Filters</h2>
+        <form method="GET" action="{{ url_for('home.home') }}">
+            <div class="search-bar">
+                <input type="text" id="search-input" name="search" placeholder="Enter Item Name"
+                       value="{{ search_term }}">
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="campus-filter">By Campus:</label>
+                    <select id="campus-filter" name="campus">
+                        <option value="all">All</option>
+                        <option value="Ritson Campus" {% if campus_filter == 'Ritson Campus' %}selected{% endif %}>Ritson Campus</option>
+                        <option value="Steve Biko Campus" {% if campus_filter == 'Steve Biko Campus' %}selected{% endif %}>Steve Biko Campus</option>
+                        <option value="ML Sultan Campus" {% if campus_filter == 'ML Sultan Campus' %}selected{% endif %}>ML Sultan Campus</option>
+                        <option value="City Campus" {% if campus_filter == 'City Campus' %}selected{% endif %}>City Campus</option>
+                        <option value="Other" {% if campus_filter == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="date-filter">By Date Lost:</label>
+                    <select id="date-filter" name="date">
+                        <option value="all">All</option>
+                        <option value="today" {% if date_filter == 'today' %}selected{% endif %}>Today</option>
+                        <option value="week" {% if date_filter == 'week' %}selected{% endif %}>Last Week
+                        </option>
+                        <option value="month" {% if date_filter == 'month' %}selected{% endif %}>Last Month
+                        </option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="category-filter">By Category:</label>
+                    <select id="category-filter" name="category">
+                        <option value="all">All</option>
+                        <option value="Electronics" {% if category_filter == 'electronics' %}selected{% endif %}>
+                            Electronics
+                        </option>
+                        <option value="ID Cards" {% if category_filter == 'id_cards' %}selected{% endif %}>ID
+                            Cards</option>
+                        <option value="Books" {% if category_filter == 'books' %}selected{% endif %}>Books
+                        </option>
+                         <option value="Clothing" {% if category_filter == 'clothing' %}selected{% endif %}>Clothing</option>
+                        <option value="Bags & Wallets" {% if category_filter == 'bags & wallets' %}selected{% endif %}>Bags & Wallets</option>
+                        <option value="Keys" {% if category_filter == 'keys' %}selected{% endif %}>Keys</option>
+                        <option value="Student Cards/ID" {% if category_filter == 'student cards/id' %}selected{% endif %}>Student Cards/ID</option>
+                        <option value="Jewelry" {% if category_filter == 'jewelry' %}selected{% endif %}>Jewelry</option>
+                        <option value="others" {% if category_filter == 'others' %}selected{% endif %}>Others
+                        </option>
+                        </select>
+                </div>
+            </div>
+            <button type="submit" id="apply-filters-btn">Apply Filters</button>
+        </form>
+    </section>
+
+    {% else %}
+    <a href="{{ url_for('registration.register') }}">Register</a> | <a href="{{ url_for('login.login') }}">Login</a>
+    {% endif %}
+
+</div>
+
+{% endblock %}

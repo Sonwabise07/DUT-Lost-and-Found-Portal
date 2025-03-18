@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Report a Lost Item{% endblock %}
+
+{% block content %}
+    <div class="home-container">
+        {# Removed unnecessary logout link - it's already in base.html #}
+
+        <h1>Report a Lost Item</h1>
+
+        {# Removed redundant flash message handling - it's in base.html #}
+
+        <form method="POST" action="{{ url_for('reports.new_report') }}" enctype="multipart/form-data" class="report-form">
+            {{ form.hidden_tag() }}
+
+            <div class="form-field">
+                {{ form.title.label }}
+                {{ form.title(class="form-control") }}
+                {% if form.title.errors %}
+                    <div class="error-message">{{ form.title.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-field">
+                {{ form.description.label }}
+                {{ form.description(class="form-control") }}
+                {% if form.description.errors %}
+                    <div class="error-message">{{ form.description.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+           <div class="form-field">
+                {{ form.category.label }}
+                {{ form.category(class="form-control", id="category") }}  </div>
+                {% if form.category.errors %}
+                    <div class="error-message">{{ form.category.errors[0] }}</div>
+                {% endif %}
+
+            <div class="form-field" id="otherCategoryDiv" style="display: none;">
+                <label for="other_category">Other Category Details:</label>
+                <input type="text" id="other_category" name="other_category" class="form-control">
+            </div>
+
+            <div class="form-field">
+              {{ form.campus.label }}
+                {{ form.campus(class="form-control", id="campus") }}  </div>
+                {% if form.campus.errors %}
+                    <div class="error-message">{{ form.campus.errors[0] }}</div>
+                {% endif %}
+
+            <div class="form-field" id="otherLocationDiv" style="display: none;">
+                <label for="other_location">Specify Other Location:</label>
+                <input type="text" id="other_location" name="other_location" class="form-control">
+            </div>
+
+            <div class="form-field">
+                {{ form.location_found.label}}
+                {{ form.location_found(class="form-control")}}
+                {% if form.location_found.errors %}
+                    <div class="error-message">{{ form.location_found.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-field">
+                {{ form.date_found.label }}
+                {{ form.date_found(class="form-control") }}
+                {% if form.date_found.errors %}
+                    <div class="error-message">{{ form.date_found.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-field">
+                {{ form.image.label }}
+                {{ form.image(class="form-control") }}
+                {% if form.image.errors %}
+                    <div class="error-message">{{ form.image.errors[0] }}</div>
+                {% endif %}
+            </div>
+             <div class="form-field">
+            {{ form.contact_method.label }}
+            {{ form.contact_method(class="form-control", id="contact_method") }}
+        </div>
+
+        <div class="form-field" id="phone_number_field" style="display: none;">
+            {{ form.phone_number.label }}
+            {{ form.phone_number(class="form-control") }}
+        </div>
+
+        <div class="form-field" id="whatsapp_number_field" style="display: none;">
+            {{ form.whatsapp_number.label }}
+            {{ form.whatsapp_number(class="form-control") }}
+        </div>
+
+        <div class="form-field" id="social_media_field" style="display: none;">
+            {{ form.social_media_handle.label }}
+            {{ form.social_media_handle(class="form-control") }}
+        </div>
+
+         <div class="form-field" id="email_field" style="display: none;">
+            {{ form.email.label }}
+            {{ form.email(class="form-control") }}
+        </div>
+
+        <div class="form-field">
+          <label>
+          <input type="checkbox" name="privacy_consent" required>
+           I understand my contact information will be shared with users who claim this item.
+            </label>
+        </div>
+
+            <div class="form-field">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('campus').addEventListener('change', function() {
+            var campus = this.value;
+            var otherLocationDiv = document.getElementById('otherLocationDiv');
+            var otherLocationInput = document.getElementById('other_location'); // Get the INPUT
+
+            if (campus === 'Other') {
+                otherLocationDiv.style.display = 'block';
+                otherLocationInput.required = true;  // MAKE IT REQUIRED
+            } else {
+                otherLocationDiv.style.display = 'none';
+                otherLocationInput.required = false; // MAKE IT NOT REQUIRED
+            }
+        });
+
+          // Show/hide "Other Category" input
+            document.getElementById('category').addEventListener('change', function() {
+                var otherCategoryDiv = document.getElementById('otherCategoryDiv');
+                 var otherCategoryInput = document.getElementById('other_category');
+                if (this.value === 'others') {
+                    otherCategoryDiv.style.display = 'block';
+                    otherCategoryInput.required = true;
+                } else {
+                    otherCategoryDiv.style.display = 'none';
+                     otherCategoryInput.required = false;
+                }
+            });
+
+        // Function to show/hide contact fields based on selected method
+        function updateContactFields() {
+            var contactMethod = document.getElementById('contact_method').value;
+            document.getElementById('phone_number_field').style.display = 'none';
+            document.getElementById('whatsapp_number_field').style.display = 'none';
+            document.getElementById('social_media_field').style.display = 'none';
+            document.getElementById('email_field').style.display = 'none';
+
+            if (contactMethod === 'call') {
+                document.getElementById('phone_number_field').style.display = 'block';
+            } else if (contactMethod === 'whatsapp') {
+                document.getElementById('whatsapp_number_field').style.display = 'block';
+            } else if (contactMethod === 'social_media') {
+                document.getElementById('social_media_field').style.display = 'block';
+            }
+            else if (contactMethod === 'email') {
+                document.getElementById('email_field').style.display = 'block';
+            }
+        }
+
+        // Add event listener to contact method dropdown
+        document.getElementById('contact_method').addEventListener('change', updateContactFields);
+
+        // Initial call to set visibility on page load
+        updateContactFields();
+        </script>
+{% endblock %}

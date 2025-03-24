@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
-from app import db, app  # Import 'app' here!
+from app import db  # Import only db
 from app.features.reports.forms import ReportForm
 from app.models.item import Item
 from werkzeug.utils import secure_filename
@@ -21,7 +21,6 @@ def new_report():
             print("*** Form validated!")
 
             # --- Actual Submission Logic ---
-            # Extract data from the form (using .data to get the values)
             title = form.title.data
             description = form.description.data
             category = form.category.data
@@ -35,10 +34,6 @@ def new_report():
                 location_found = form.location_found.data
 
 
-            date_found = form.date_found.data  # It's ALREADY a date object
-            # time_found = form.time_found.data  #It is already a time object REMOVED
-
-
             # ---  IMAGE HANDLING (START) ---
             image = request.files.get('image')
             filename = None
@@ -48,9 +43,9 @@ def new_report():
                     # Generate a unique filename
                     filename = secure_filename(image.filename)
                     filename = f"{uuid.uuid4()}_{filename}"  # Add a UUID for uniqueness
-                    # Use os.path.join *and* app.root_path
-                    filepath = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], filename)
-                    print(f"*** Filepath: {filepath}")
+                    # Corrected filepath construction:
+                    filepath = os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], filename) #Changed to this
+                    print(f"*** Filepath: {filepath}")  # Debug print
 
                     try:
                         # Save the original image
@@ -65,14 +60,15 @@ def new_report():
                         img.save(filepath)  # Overwrite original
                         print("*** Image resized and saved (500x500)")
 
-                        thumb_path = os.path.join(app.root_path, app.config['UPLOAD_FOLDER'], "thumb_" + filename) #Also use root_path here
+                        thumb_path = os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'], "thumb_" + filename) #Changed to this
                         img.thumbnail((100, 100))
                         img.save(thumb_path)
                         print("*** Thumbnail saved (100x100)")
 
+
                     except Exception as e:
                         # Handle image processing errors (e.g., invalid image format)
-                        print(f"*** Image processing error: {e}")  # DETAILED ERROR
+                        print(f"*** Image processing error: {e}")  # DETAILED ERROR - VERY IMPORTANT
                         flash('Could not process image. Please ensure it is a valid image file and not corrupted.', 'error')
                         if os.path.exists(filepath):  # Delete the file if it was saved
                             os.remove(filepath)
@@ -97,7 +93,7 @@ def new_report():
                 category=category,
                 campus= campus,
                 location_found=location_found,
-                date_found=date_found,
+                #date_found=date_found,  Removed
                 # time_found=time_found,  Removed
                 image_filename=filename,
                 user_id=current_user.id,
@@ -105,7 +101,8 @@ def new_report():
                 phone_number = phone_number,
                 whatsapp_number = whatsapp_number,
                 social_media = social_media_handle,
-                email = email_addrs
+                email = email_addrs,
+                date_reported = datetime.utcnow() # Use current time
             )
             db.session.add(report)
             db.session.commit()
@@ -123,4 +120,4 @@ def new_report():
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']

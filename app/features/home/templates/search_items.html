@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Search Items{% endblock %}
+
+{% block content %}
+    <h1>Search for Lost Items</h1>
+
+    <form method="GET" action="{{ url_for('home.search_items') }}">
+        <div class="form-field">
+            <label for="search">Search:</label>
+            <input type="text" id="search" name="search" value="{{ search_term }}" class="form-control">
+        </div>
+
+        <div class="form-field">
+            <label for="category">Category:</label>
+            <select id="category" name="category" class="form-control">
+                <option value="all">All Categories</option>
+               <option value="Electronics" {% if category_filter == 'Electronics' %}selected{% endif %}>Electronics</option>
+               <option value="ID Cards" {% if category_filter == 'ID Cards' %}selected{% endif %}>ID Cards</option>
+               <option value="Books" {% if category_filter == 'Books' %}selected{% endif %}>Books</option>
+               <option value="Clothing" {% if category_filter == 'Clothing' %}selected{% endif %}>Clothing</option>
+               <option value="Bags & Wallets" {% if category_filter == 'Bags & Wallets' %}selected{% endif %}>Bags & Wallets</option>
+               <option value="Keys" {% if category_filter == 'Keys' %}selected{% endif %}>Keys</option>
+              <option value="Student Cards/ID" {% if category_filter == 'Student Cards/ID' %}selected{% endif %}>Student Cards/ID</option>
+              <option value="Jewelry" {% if category_filter == 'Jewelry' %}selected{% endif %}>Jewelry</option>
+               <option value="others" {% if category_filter == 'others' %}selected{% endif %}>Others</option>
+            </select>
+        </div>
+
+       <div class="form-field">
+                <label for="campus-filter">By Campus:</label>
+                <select id="campus-filter" name="campus" class = "form-control">
+                    <option value="all">All</option>
+                    <option value="Ritson Campus" {% if campus_filter == 'Ritson Campus' %}selected{% endif %}>Ritson Campus</option>
+                    <option value="Steve Biko Campus" {% if campus_filter == 'Steve Biko Campus' %}selected{% endif %}>Steve Biko Campus</option>
+                    <option value="ML Sultan Campus" {% if campus_filter == 'ML Sultan Campus' %}selected{% endif %}>ML Sultan Campus</option>
+                    <option value="City Campus" {% if campus_filter == 'City Campus' %}selected{% endif %}>City Campus</option>
+                    <option value="Other" {% if campus_filter == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+        </div>
+
+        <div class="form-field">
+            <label for="date-filter">By Date Reported:</label>
+             <input type="date" id="date-filter" name="date" class="form-control" value="{{ date_filter }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <h2>Search Results</h2>
+
+    <div class="listings-grid">
+    {% for item in items %}
+    <div class="listing-item">
+      <a href="{{ url_for('home.item_detail', item_id=item.id) }}">
+        {% if item.image_filename %}
+        <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="Item Image">
+        {% else %}
+        <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="Placeholder Image">
+        {% endif %}
+      </a>
+        <div class="item-details">
+            <h3><a href="{{ url_for('home.item_detail', item_id=item.id) }}">{{ item.title }}</a></h3>
+            <p>{{ item.description }}</p>
+            <p>Location Found: {{ item.location_found }}</p>
+            <p>Date Reported: {{ item.date_reported.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+
+             {# ADD CLAIM BUTTON HERE, conditionally #}
+             {% if not item.is_claimed and current_user.is_authenticated and current_user.id != item.reporter.id %}
+                <a href="{{ url_for('claims.claim_item', item_id=item.id) }}" class="btn btn-primary">Claim Item</a>
+             {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <p>No items found matching your criteria.</p>
+    {% endfor %}
+</div>
+{% endblock %}

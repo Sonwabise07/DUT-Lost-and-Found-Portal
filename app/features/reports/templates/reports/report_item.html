@@ -29,7 +29,7 @@
                 {% endif %}
             </div>
 
-           <div class="form-field">
+        <div class="form-field">
                 {{ form.category.label }}
                 {{ form.category(class="form-control", id="category") }}  </div>
                 {% if form.category.errors %}
@@ -42,7 +42,7 @@
             </div>
 
             <div class="form-field">
-              {{ form.campus.label }}
+            {{ form.campus.label }}
                 {{ form.campus(class="form-control", id="campus") }}  </div>
                 {% if form.campus.errors %}
                     <div class="error-message">{{ form.campus.errors[0] }}</div>
@@ -62,21 +62,13 @@
             </div>
 
             <div class="form-field">
-                {{ form.date_found.label }}
-                {{ form.date_found(class="form-control") }}
-                {% if form.date_found.errors %}
-                    <div class="error-message">{{ form.date_found.errors[0] }}</div>
-                {% endif %}
-            </div>
-
-            <div class="form-field">
                 {{ form.image.label }}
                 {{ form.image(class="form-control") }}
                 {% if form.image.errors %}
                     <div class="error-message">{{ form.image.errors[0] }}</div>
                 {% endif %}
             </div>
-             <div class="form-field">
+            <div class="form-field">
             {{ form.contact_method.label }}
             {{ form.contact_method(class="form-control", id="contact_method") }}
         </div>
@@ -96,15 +88,15 @@
             {{ form.social_media_handle(class="form-control") }}
         </div>
 
-         <div class="form-field" id="email_field" style="display: none;">
+        <div class="form-field" id="email_field" style="display: none;">
             {{ form.email.label }}
             {{ form.email(class="form-control") }}
         </div>
 
         <div class="form-field">
-          <label>
-          <input type="checkbox" name="privacy_consent" required>
-           I understand my contact information will be shared with users who claim this item.
+        <label>
+        <input type="checkbox" name="privacy_consent" required>
+        I understand my contact information will be shared with users who claim this item.
             </label>
         </div>
 
@@ -113,6 +105,7 @@
             </div>
         </form>
     </div>
+
     <script>
         document.getElementById('campus').addEventListener('change', function() {
             var campus = this.value;
@@ -128,10 +121,10 @@
             }
         });
 
-          // Show/hide "Other Category" input
+        // Show/hide "Other Category" input
             document.getElementById('category').addEventListener('change', function() {
                 var otherCategoryDiv = document.getElementById('otherCategoryDiv');
-                 var otherCategoryInput = document.getElementById('other_category');
+                var otherCategoryInput = document.getElementById('other_category');
                 if (this.value === 'others') {
                     otherCategoryDiv.style.display = 'block';
                     otherCategoryInput.required = true;
@@ -161,10 +154,8 @@
             }
         }
 
-        // Add event listener to contact method dropdown
-        document.getElementById('contact_method').addEventListener('change', updateContactFields);
-
-        // Initial call to set visibility on page load
+        // Initial setup and event listener for contact method
         updateContactFields();
-        </script>
+        document.getElementById('contact_method').addEventListener('change', updateContactFields);
+    </script>
 {% endblock %}

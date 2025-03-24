@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Claim Item: {{ item.title }}</h2>
+
+  <p><strong>Description:</strong> {{ item.description }}</p>
+  <p><strong>Reported by:</strong> {{ item.reporter.name }}</p>
+  <img src="{{ item.image_url }}" alt="Item Image" style="max-width: 300px;">
+
+  <h3>Claim Agreement</h3>
+
+    <div class="agreement-text" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 20px; height: 200px; overflow-y: scroll;">
+    <p>
+        DURBAN UNIVERSITY OF TECHNOLOGY (DUT) LOST AND FOUND CLAIM AGREEMENT<br>
+        This Agreement is a legally binding document between Durban University of Technology (DUT) and the claimant. By signing this document, you acknowledge that you are the rightful owner of the item you are claiming. Providing false information or attempting to fraudulently claim an item that does not belong to you will result in serious consequences.
+    </p>
+    <ol>
+        <li>I hereby confirm that the item I am claiming is my personal property, and I can provide proof of ownership if required.</li>
+        <li>I understand that providing false information or attempting to claim an item that is not mine constitutes fraud and will result in immediate disciplinary action, including EXPULSION from Durban University of Technology.</li>
+        <li>I acknowledge that DUT reserves the right to verify my claim and that the final decision lies with the university’s administration.</li>
+        <li>I understand that if found guilty of fraudulent claims, I may also face CRIMINAL CHARGES, which could result in a permanent criminal record.</li>
+        <li>I accept full responsibility for the accuracy of the information provided and agree to abide by DUT’s policies regarding lost and found items.</li>
+        <li>I acknowledge that any attempt to interfere with or manipulate the lost and found process will be reported to law enforcement authorities.</li>
+    </ol>
+  </div>
+
+  <form method="POST" action="{{ url_for('claims.claim_item', item_id=item.id) }}">
+    <label for="typed_name">Type Your Full Name to Sign:</label><br>
+    <input type="text" id="typed_name" name="typed_name" required>
+    <hr style="border-top: 1px solid black;"> {{""}}
+    <button type="submit" class="btn btn-primary">Confirm and Submit Claim</button>
+  </form>
+
+{% endblock %}

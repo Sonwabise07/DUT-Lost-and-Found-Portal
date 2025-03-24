@@ -1,11 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, DateField, SubmitField, FileField, TelField, BooleanField
+from wtforms import StringField, TextAreaField, SelectField, SubmitField, FileField, TelField, BooleanField
 from wtforms.validators import DataRequired, Length, Optional, Email
 
 
 class ReportForm(FlaskForm):
     title = StringField('Title', validators=[
-        DataRequired(message="Please enter a title for the item."),  # Custom message
+        DataRequired(message="Please enter a title for the item."),
         Length(max=100, message="Title must be less than 100 characters.")
     ])
 
@@ -36,7 +36,6 @@ class ReportForm(FlaskForm):
     other_location = StringField('If other, specify:')  # No validators here!
 
     location_found = StringField('Location Found', validators=[DataRequired(message="Please enter the location where the item was found.")])
-    date_found = DateField('Date Found', validators=[DataRequired(message = "Please select date")])
     image = FileField('Image')
     privacy_consent = BooleanField('I consent to my contact information being shared with the owner of the item.', validators=[DataRequired(message="You must consent to share your contact information.")])
 

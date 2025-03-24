@@ -9,7 +9,8 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     campus = db.Column(db.String(100), nullable=False)
-    # items_reported = db.relationship('Item', backref='reporter', lazy=True)  # TEMPORARILY REMOVED
+    # items_reported = db.relationship('Item', backref='reporter', lazy=True)  # Corrected - see below
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -18,6 +19,10 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.first_name}', '{self.email}')"
+
+    @property  # Add this property!
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
 
 @login_manager.user_loader
 def load_user(user_id):

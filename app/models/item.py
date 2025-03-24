@@ -9,8 +9,6 @@ class Item(db.Model):
     category = db.Column(db.String(50), nullable=False)
     campus = db.Column(db.String(50), nullable=False)
     location_found = db.Column(db.String(100), nullable=False)
-    date_found = db.Column(db.Date, nullable=False)  # Date only
-    time_found = db.Column(db.Time) # Time only
     image_filename = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date_reported = db.Column(db.DateTime, default=datetime.utcnow)
@@ -20,9 +18,12 @@ class Item(db.Model):
     whatsapp_number = db.Column(db.String(20)) # Adjust length as needed
     social_media = db.Column(db.String(100))  # Adjust length as needed
     email = db.Column(db.String(120))
+    is_claimed = db.Column(db.Boolean, default=False)
+    returned = db.Column(db.Boolean, default=False)  # ADD THIS LINE
 
     # Relationship (Corrected)
-    reporter = db.relationship('User', lazy=True) # Keep.
+    reporter = db.relationship('User', backref='items_reported', lazy=True)
+
 
     def __repr__(self):
         return f"<Item {self.title}>"

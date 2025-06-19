@@ -3,14 +3,14 @@ from flask_login import login_required, current_user
 from app import db
 from app.models.item import Item  # Import Item model
 from .forms import EditItemForm #Import forms
-
-my_listings_bp = Blueprint('my_listings', __name__, template_folder='templates')
+from . import my_listings_bp # Import the blueprint defined in __init__.py
 
 @my_listings_bp.route('/my_listings')
 @login_required
 def my_listings():
-    items = Item.query.filter_by(reporter=current_user).all()
-    return render_template('my_listings/my_listings.html', items=items)
+    items = Item.query.filter_by(reporter=current_user).all()  # Corrected: Use 'reporter'
+    return render_template('my_listings.html', items=items) #Corrected path
+
 
 @my_listings_bp.route('/mark_returned/<int:item_id>', methods=['POST'])
 @login_required
@@ -23,7 +23,7 @@ def mark_returned(item_id):
         return redirect(url_for('home.home'))
 
     # Check if there's an approved claim
-    claim = item.claims[0] if item.claims else None
+    claim = item.claims[0] if item.claims else None  # Access claims correctly
     if not claim or claim.claim_status != 'approved':
         flash('This item cannot be marked as returned yet.', 'warning')
         return redirect(url_for('my_listings.my_listings'))
@@ -43,25 +43,26 @@ def edit_item(item_id):
         flash('You are not authorized to edit this item.', 'danger')
         return redirect(url_for('my_listings.my_listings'))
 
-     # Check if the item has been claimed or returned
-    if item.claims or item.returned:
+    # Check if the item has been claimed or returned
+    if item.claims or item.returned:  # Check for claims correctly
         flash('You cannot edit an item that has been claimed or returned.', 'warning')
         return redirect(url_for('my_listings.my_listings'))
 
-    form = EditItemForm(obj=item)  # Pre-populate the form with item data
+    form = EditItemForm(obj=item)  # Pre-populate the form
 
     if form.validate_on_submit():
         item.title = form.title.data
         item.description = form.description.data
         item.category = form.category.data
-        item.campus= form.campus.data
+        item.campus = form.campus.data
         item.location_found = form.location_found.data
-        # item.image_filename = form.image_filename.data # We will handle images later
+        # item.image_filename = form.image_filename.data  # Handle images later
         db.session.commit()
         flash('Item updated successfully!', 'success')
         return redirect(url_for('my_listings.my_listings'))
 
-    return render_template('my_listings/edit_item.html', form=form, item=item)
+    return render_template('my_listings/edit_item.html', form=form, item=item) #Correct Path
+
 
 @my_listings_bp.route('/delete_item/<int:item_id>', methods=['POST'])
 @login_required
@@ -74,7 +75,7 @@ def delete_item(item_id):
         return redirect(url_for('my_listings.my_listings'))
 
     # Check if the item has been claimed or returned
-    if item.claims or item.returned:
+    if item.claims or item.returned:  # Check for claims correctly
         flash('You cannot delete an item that has been claimed or returned.', 'warning')
         return redirect(url_for('my_listings.my_listings'))
 

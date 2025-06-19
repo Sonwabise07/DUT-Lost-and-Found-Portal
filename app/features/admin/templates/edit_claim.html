@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Edit Claim{% endblock %}
+
+{% block content %}
+    <h1>Edit Claim (ID: {{ claim.id }})</h1>
+
+    <p><strong>Item:</strong> {{ claim.item.title }}</p>
+    <p><strong>Claimant:</strong> {{ claim.user.full_name }} ({{ claim.user.email }})</p>
+    <p><strong>Submitted:</strong> {{ claim.agreement_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+
+    <form method="post" action="{{ url_for('admin.edit_claim', claim_id=claim.id) }}">
+        {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.status.label }}
+            {{ form.status(class="form-control") }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Status</button>
+    </form>
+
+    <a href="{{ url_for('admin.list_claims') }}" class="btn btn-secondary">Back to Claims List</a>
+
+{% endblock %}

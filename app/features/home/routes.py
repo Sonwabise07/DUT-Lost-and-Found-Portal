@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from app import db
 from app.models.item import Item
@@ -15,7 +15,7 @@ def index():
 @home_bp.route("/home")
 def home():
     recent_listings = Item.query.filter(Item.returned == False).order_by(Item.date_reported.desc()).limit(10).all()
-    return render_template('home/home.html', recent_listings=recent_listings)  # Correct path
+    return render_template('home.html', recent_listings=recent_listings)  # Correct path
 
 @home_bp.route('/search', methods=['GET'])
 def search_items():
@@ -50,7 +50,7 @@ def search_items():
 
         except ValueError as e:
             print(f"*** Date Parsing Error: {e}")
-            flash("Invalid date format.  Please use YYYY-MM-DD.", 'error')
+            flash("Invalid date format.  Please useரும்பு-MM-DD.", 'error')
 
     if category_filter != 'all':
         if category_filter == 'id_cards':
@@ -63,7 +63,7 @@ def search_items():
     items = query.all()
     print(f"*** Found items: {items}")
 
-    return render_template('home/search_items.html', items=items, search_term=search_term,
+    return render_template('search_items.html', items=items, search_term=search_term,
                             category_filter=category_filter, campus_filter=campus_filter,
                             date_filter=date_filter_str)
 
@@ -71,4 +71,4 @@ def search_items():
 @login_required
 def item_detail(item_id):
     item = Item.query.get_or_404(item_id)
-    return render_template('home/item_detail.html', item=item)  # Correct path
+    return render_template('item_detail.html', item=item)  # Correct path

@@ -7,12 +7,6 @@ from datetime import datetime
 
 claims_bp = Blueprint('claims', __name__, template_folder='templates')
 
-def update_claim_status(claim_id, status):
-    """Helper function to update claim status."""
-    claim = Claim.query.get_or_404(claim_id)
-    claim.claim_status = status
-    db.session.commit()
-
 @claims_bp.route('/claim/<int:item_id>', methods=['GET', 'POST'])  # Handle GET and POST
 @login_required
 def claim_item(item_id):
@@ -37,7 +31,7 @@ def claim_item(item_id):
         # Validate the typed name against the user's full name
         if typed_name != current_user.full_name:  # Use the full_name property!
             flash('The typed name does not match your registered full name.', 'danger')
-            return render_template('claim_agreement.html', item=item)
+            return render_template('claims/claim_agreement.html', item=item)
 
         # Create the Claim object
         agreement_text = """
@@ -67,31 +61,4 @@ This Agreement is a legally binding document between Durban University of Techno
         return redirect(url_for('home.item_detail', item_id=item.id))
 
     # If it's a GET request, display the agreement form
-    return render_template('claim_agreement.html', item=item)
-
-@claims_bp.route('/approve_claim/<int:claim_id>')
-@login_required  # In a real admin interface, you'd use a different decorator, like @admin_required
-def approve_claim(claim_id):
-    #For demonstration, we allow the item owner to approve.
-    claim = Claim.query.get_or_404(claim_id)
-    if current_user.id != claim.item.reporter.id:
-        flash('You are not authorized to approve claims.', 'danger')
-        return redirect(url_for('home.home'))
-
-    update_claim_status(claim_id, 'approved')
-    flash('Claim approved.', 'success')
-    return redirect(url_for('my_listings.my_listings'))
-
-
-@claims_bp.route('/reject_claim/<int:claim_id>')
-@login_required
-def reject_claim(claim_id):
-    # For demonstration, we allow the item owner to reject.
-    claim = Claim.query.get_or_404(claim_id)
-    if current_user.id != claim.item.reporter.id:
-        flash('You are not authorized to reject claims.', 'danger')
-        return redirect(url_for('home.home'))
-
-    update_claim_status(claim_id, 'rejected')
-    flash('Claim rejected.', 'success')
-    return redirect(url_for('my_listings.my_listings'))
+    return render_template('claims/claim_agreement.html', item=item)

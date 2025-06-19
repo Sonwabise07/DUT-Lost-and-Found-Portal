@@ -1,6 +1,8 @@
-#app/features/login/__init__.py
+# app/features/login/__init__.py (CORRECTED)
 from flask import Blueprint
 
+# Define the blueprint HERE
 login_bp = Blueprint('login', __name__, template_folder='templates')
 
-from app.features.login.routes import login, logout
+# Import the routes module AFTER defining the blueprint
+from . import routes

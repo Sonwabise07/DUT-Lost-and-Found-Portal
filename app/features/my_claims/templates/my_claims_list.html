@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}My Claims{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>My Claims</h1>
+
+    {% if claims %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Date Claimed</th>
+                    <th>Status</th>
+                    <th>Contact Details (if Approved)</th>
+                    {# Removed Action Header #}
+                </tr>
+            </thead>
+            <tbody>
+                {% for claim in claims %}
+                <tr>
+                    {# Link to the original item detail page #}
+                    <td><a href="{{ url_for('home.item_detail', item_id=claim.item.id) }}">{{ claim.item.title }}</a></td>
+                    <td>{{ claim.item.category }}</td>
+                    <td>{{ claim.agreement_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        {% if claim.claim_status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Pending Review</span>
+                        {% elif claim.claim_status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
+                        {% elif claim.claim_status == 'rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ claim.claim_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {# --- Show Reporter Contact Info ONLY if Approved --- #}
+                        {% if claim.claim_status == 'approved' %}
+                            <div class="alert alert-info p-2 small"> {# Smaller alert box #}
+                                <strong>Reporter Contact:</strong><br>
+                                {% if claim.item.contact_method %}
+                                    <small>Method: {{ claim.item.contact_method }}</small><br>
+                                {% endif %}
+                                {% if claim.item.phone_number %}
+                                    <small>Phone: {{ claim.item.phone_number }}</small><br>
+                                {% endif %}
+                                {% if claim.item.whatsapp_number %}
+                                    <small>WhatsApp: {{ claim.item.whatsapp_number }}</small><br>
+                                {% endif %}
+                                {% if claim.item.social_media %}
+                                    <small>Social: {{ claim.item.social_media }}</small><br>
+                                {% endif %}
+                                {% if claim.item.email %}
+                                    <small>Email: {{ claim.item.email }}</small><br>
+                                {% endif %}
+                                {% if not claim.item.contact_method and not claim.item.phone_number and not claim.item.whatsapp_number and not claim.item.social_media and not claim.item.email %}
+                                    <small>No specific contact details provided.</small>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <small class="text-muted">Details shown upon approval.</small>
+                        {% endif %}
+                        {# --- End Reporter Contact Info --- #}
+                    </td>
+                    {# Removed Action Cell #}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You have not submitted any claims yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

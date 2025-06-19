@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <h1>Admin Dashboard</h1>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text">{{ total_users }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Items</h5>
+                    <p class="card-text">{{ total_items }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Claims</h5>
+                    <p class="card-text">{{ pending_claims }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2>All Items</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Campus</th>
+                <th>Location Found</th>
+                <th>Date Reported</th>
+                <th>Reporter</th>
+                <th>Returned</th>
+                <th>Claims</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.campus }}</td>
+                <td>{{ item.location_found }}</td>
+                <td>{{ item.date_reported.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ item.reporter.email }}</td>
+                <td>{{ item.returned }}</td>
+                <td>
+                    <ul>
+                    {% for claim in item.claims %}
+                       <li>
+                         Claim ID: {{ claim.id }}, Status: {{ claim.claim_status }}
+                         {% if claim.claim_status == 'pending' %}
+                           <form action="{{ url_for('admin.approve_claim', claim_id=claim.id) }}" method="post" style="display: inline;">
+                             <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                           </form>
+                           <form action="{{ url_for('admin.reject_claim', claim_id=claim.id) }}" method="post" style="display: inline;">
+                              <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                           </form>
+                        {% endif %}
+                      </li>
+                    {% endfor %}
+                    </ul>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

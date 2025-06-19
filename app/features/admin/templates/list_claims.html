@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Manage Claims{% endblock %}
+
+{% block content %}
+    <h1>Manage Claims</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Item</th>
+                <th>Claimant</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for claim in claims %}
+            <tr>
+                <td>{{ claim.id }}</td>
+                <td>{{ claim.item.title }}</td>
+                <td>{{ claim.user.full_name }} ({{ claim.user.email }})</td>
+                <td>{{ claim.claim_status }}</td>
+                <td>{{ claim.agreement_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    <a href="{{ url_for('admin.edit_claim', claim_id=claim.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

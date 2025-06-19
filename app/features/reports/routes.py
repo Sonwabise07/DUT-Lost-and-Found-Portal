@@ -9,11 +9,14 @@ from PIL import Image
 import uuid
 from datetime import datetime
 
-reports_bp = Blueprint('reports', __name__, template_folder='templates')
+from app.features.reports import reports_bp  # Import the *blueprint*
 
-@reports_bp.route('/report/new', methods=['GET', 'POST'])
+# reports_bp = Blueprint('reports', __name__, template_folder='templates') # REMOVE - Already in __init__.py
+
+
+@reports_bp.route('/report/new', methods=['GET', 'POST'])  # Correct route
 @login_required
-def new_report():
+def new_report():  # Correct function name
     form = ReportForm()
     if request.method == 'POST':
         print("*** Form submitted!")
@@ -116,7 +119,7 @@ def new_report():
                 for error in errors:
                     print(f"    Error in field {field}: {error}")  # Corrected f-string
 
-    return render_template('reports/report_item.html', form=form)
+    return render_template('reports/report_item.html', form=form) # Correct template path.
 
 
 def allowed_file(filename):

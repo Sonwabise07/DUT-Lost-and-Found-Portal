@@ -1,0 +1,24 @@
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# IDE and editor specific files
+.vscode/
+.idea/
+*.swp
+
+# Instance folder for Flask (if you use it for secrets)
+instance/

@@ -9,8 +9,9 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     campus = db.Column(db.String(100), nullable=False)
-    # items_reported = db.relationship('Item', backref='reporter', lazy=True)  # Corrected - see below
+    role = db.Column(db.String(20), default='user')  # ADD THIS LINE
 
+    # items_reported = db.relationship('Item', backref='reporter', lazy=True)  # TEMPORARILY REMOVED
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

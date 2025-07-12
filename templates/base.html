@@ -1,67 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Lost and Found App{% endblock %}</title>
+    <title>{% block title %}DUT Lost and Found{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- Your Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> {# Changed bg-primary to bg-dark for better contrast #}
+<body class="d-flex flex-column h-100">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('home.home') }}">Lost & Found</a>
+            <a class="navbar-brand" href="{{ url_for('home.home') }}"><i class="bi bi-search-heart"></i> Lost & Found</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0"> {# me-auto aligns left #}
-                    {# Home link always visible #}
+                <!-- Left-aligned links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'home.home' %}active{% endif %}" aria-current="page" href="{{ url_for('home.home') }}">Home</a>
+                        <a class="nav-link {% if request.endpoint == 'home.home' %}active{% endif %}" href="{{ url_for('home.home') }}"><i class="bi bi-house-door"></i> Home</a>
                     </li>
                     {% if current_user.is_authenticated %}
-                        {# Links for logged-in users #}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.blueprint == 'my_listings' %}active{% endif %}" href="{{ url_for('my_listings.my_listings') }}">My Listings</a>
+                            <a class="nav-link {% if request.blueprint == 'my_listings' %}active{% endif %}" href="{{ url_for('my_listings.my_listings') }}"><i class="bi bi-card-list"></i> My Listings</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link {% if request.blueprint == 'my_claims' %}active{% endif %}" href="{{ url_for('my_claims.list_user_claims') }}">My Claims</a>
+                           <a class="nav-link {% if request.blueprint == 'my_claims' %}active{% endif %}" href="{{ url_for('my_claims.list_user_claims') }}"><i class="bi bi-check2-square"></i> My Claims</a>
                         </li>
-                        {# --- ADMIN LINKS --- #}
                         {% if current_user.role == 'admin' %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle {% if request.blueprint == 'admin' %}active{% endif %}" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Admin
+                                <i class="bi bi-person-badge"></i> Admin
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="adminDropdown">
                                 <li><a class="dropdown-item" href="{{ url_for('admin.admin_dashboard') }}">Dashboard</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('admin.list_claims') }}">Manage Claims</a></li>
-                                {# Add other admin links here if needed #}
                             </ul>
                         </li>
                         {% endif %}
-                        {# --- END ADMIN LINKS --- #}
                     {% endif %}
                 </ul>
-                <ul class="navbar-nav"> {# Right-aligned items (default without ms-auto in BS5) #}
+                <!-- Right-aligned links -->
+                <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <span class="navbar-text me-2">
-                                Welcome, {{ current_user.first_name }}
-                            </span>
+                            <span class="navbar-text me-2">Welcome, {{ current_user.first_name }}</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login.logout') }}">Logout</a>
+                            <a class="nav-link" href="{{ url_for('login.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
                         </li>
                     {% else %}
-                        {# Links for logged-out users #}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'registration.register' %}active{% endif %}" href="{{ url_for('registration.register') }}">Register</a>
+                            <a class="nav-link {% if request.endpoint == 'registration.register' %}active{% endif %}" href="{{ url_for('registration.register') }}"><i class="bi bi-person-plus"></i> Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'login.login' %}active{% endif %}" href="{{ url_for('login.login') }}">Login</a>
+                            <a class="nav-link {% if request.endpoint == 'login.login' %}active{% endif %}" href="{{ url_for('login.login') }}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -69,26 +70,55 @@
         </div>
     </nav>
 
-    <div class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {# Use correct dismissible alert classes for Bootstrap 5 #}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    <!-- Main Content Area -->
+    <main class="flex-shrink-0">
+        <div class="container mt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message|safe }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
-        {% block content %}{% endblock %}
-    </div>
-
-    <footer>
-        {# Footer content can be added here later #}
+    <!-- Enhanced Footer -->
+    <footer class="footer mt-auto py-3 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <!-- About Section -->
+                <div class="col-md-6 mb-3">
+                    <h5>About Lost & Found</h5>
+                    <p class="text-muted">A centralized platform for the DUT community to report and find lost items across all campuses. Our goal is to reunite owners with their belongings quickly and efficiently.</p>
+                </div>
+                <!-- Quick Links Section -->
+                <div class="col-md-6 mb-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('home.home') }}" class="text-white text-decoration-none">Home</a></li>
+                        {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('my_listings.my_listings') }}" class="text-white text-decoration-none">My Listings</a></li>
+                        <li><a href="{{ url_for('my_claims.list_user_claims') }}" class="text-white text-decoration-none">My Claims</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('login.login') }}" class="text-white text-decoration-none">Login</a></li>
+                        <li><a href="{{ url_for('registration.register') }}" class="text-white text-decoration-none">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center pt-3 border-top border-secondary">
+                <p class="text-muted">&copy; 2024 DUT Lost and Found Portal. All Rights Reserved.</p>
+            </div>
+        </div>
     </footer>
-    {# Bootstrap 5 JS Bundle #}
+
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

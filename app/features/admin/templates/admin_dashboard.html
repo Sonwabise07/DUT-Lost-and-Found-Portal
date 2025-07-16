@@ -78,7 +78,10 @@
                         {% for claim in item.claims %}
                             <li>
                                 <div class="d-flex align-items-center">
-                                    <span class="me-2"><strong>ID:</strong> {{ claim.id }} | <strong>Status:</strong> <span class="badge 
+                                    <span class="me-2">
+                                        <strong>ID:</strong> {{ claim.id }} | 
+                                        <strong>Status:</strong> 
+                                        <span class="badge 
                                         {% if claim.claim_status == 'pending' %}bg-warning text-dark
                                         {% elif claim.claim_status == 'approved' %}bg-success
                                         {% elif claim.claim_status == 'rejected' %}bg-danger

@@ -15,13 +15,11 @@
                     <th>Date Claimed</th>
                     <th>Status</th>
                     <th>Contact Details (if Approved)</th>
-                    {# Removed Action Header #}
                 </tr>
             </thead>
             <tbody>
                 {% for claim in claims %}
                 <tr>
-                    {# Link to the original item detail page #}
                     <td><a href="{{ url_for('home.item_detail', item_id=claim.item.id) }}">{{ claim.item.title }}</a></td>
                     <td>{{ claim.item.category }}</td>
                     <td>{{ claim.agreement_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
@@ -37,9 +35,8 @@
                         {% endif %}
                     </td>
                     <td>
-                        {# --- Show Reporter Contact Info ONLY if Approved --- #}
                         {% if claim.claim_status == 'approved' %}
-                            <div class="alert alert-info p-2 small"> {# Smaller alert box #}
+                            <div class="alert alert-info p-2 small">
                                 <strong>Reporter Contact:</strong><br>
                                 {% if claim.item.contact_method %}
                                     <small>Method: {{ claim.item.contact_method }}</small><br>
@@ -63,9 +60,7 @@
                         {% else %}
                             <small class="text-muted">Details shown upon approval.</small>
                         {% endif %}
-                        {# --- End Reporter Contact Info --- #}
                     </td>
-                    {# Removed Action Cell #}
                 </tr>
                 {% endfor %}
             </tbody>

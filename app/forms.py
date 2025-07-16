@@ -22,10 +22,10 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', 
                         validators=[DataRequired(message="Email is required."), Email(message="Please enter a valid email address.")])
     
-    # Campus Selection Dropdown
+    
     campus = SelectField('Campus', 
                          choices=[
-                             ('', '--- Select a Campus ---'), # Placeholder option
+                             ('', '--- Select a Campus ---'), 
                              ('Ritson', 'Ritson'), 
                              ('Ml Sultan', 'Ml Sultan'), 
                              ('Steve Biko', 'Steve Biko'), 
@@ -54,7 +54,7 @@ class RegistrationForm(FlaskForm):
         """
         p = re.compile(r'(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}')
         if not p.match(password.data):
-            # Create a more user-friendly error message
+            
             error_message = """
             Password must contain at least:
             <ul>

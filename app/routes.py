@@ -7,11 +7,11 @@ from werkzeug.security import check_password_hash
 from urllib.parse import urlparse
 import re
 
-print(f"*** app object imported into routes.py: {app}")  # ADD THIS LINE
+print(f"*** app object imported into routes.py: {app}")  
 
 @app.route('/')
 def index():
-    print("*** Inside the index route!")  # ADD THIS LINE
+    print("*** Inside the index route!")  
     return redirect(url_for('home'))
 
 @app.route("/register", methods=["GET", "POST"])
@@ -41,7 +41,7 @@ def register():
             email=email,
             campus=form.campus.data
         )
-        new_user.set_password(form.password.data)  # Ensure set_password() hashes the password
+        new_user.set_password(form.password.data)  
 
         try:
             db.session.add(new_user)
@@ -59,8 +59,8 @@ def register():
 @app.route("/home")
 def home():
     #add the flash message
-    if not current_user.is_anonymous: #check that a user is logged in before showing
-        flash("Login successful!", "success") #add flash here
+    if not current_user.is_anonymous:
+        flash("Login successful!", "success") 
 
     search_term = request.args.get('search', '')
     campus_filter = request.args.get('campus', 'all')
@@ -105,7 +105,7 @@ def login():
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             next_page = request.args.get('next')
-            if not next_page or urlparse(next_page).netloc != '':  # Corrected function call
+            if not next_page or urlparse(next_page).netloc != '':  
                 next_page = url_for('home')
             return redirect(next_page)
         else:
